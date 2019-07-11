@@ -3,7 +3,7 @@
 <p align="center"><img src='fig/NVAN.jpg' ></p>
 
 - **STE-NVAN**
-<p align="center"><img src='fig/STE-NVAN.jpg' ></p>
+<p align="center"><img src='fig/STE-NVAN.jpg' width="800pix"></p>
 
 [[Paper]](http://media.ee.ntu.edu.tw/research/STE_NVAN/BMVC19_STE_NVAN_cam.pdf)
 
