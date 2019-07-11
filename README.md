@@ -13,9 +13,9 @@ This is the pytorch implementatin of Spatially and Temporally Efficient Non-loca
 - Install dependancy
 
 ### Datasets
-We conduct experiments on [MARS](http://www.liangzheng.com.cn/Project/project_mars.html) and [DukeMTMC-VideoReID](https://github.com/Yu-Wu/DukeMTMC-VideoReID) datasets.
+We conduct experiments on [MARS](http://www.liangzheng.com.cn/Project/project_mars.html) and [DukeMTMC-VideoReID](https://github.com/Yu-Wu/DukeMTMC-VideoReID) (DukeV) datasets.
 
-For MARS dataset:
+**For MARS dataset:**
 - Download and unzip the dataset from the official website. ([Google Drive](https://drive.google.com/drive/u/1/folders/0B6tjyrV1YrHeMVV2UFFXQld6X1E))
 - Clone the repo of [MARS-evaluation](https://github.com/liangzheng06/MARS-evaluation). We will need the files under **info/** directory.
 <br/>You will have the structure as follows:
@@ -25,4 +25,13 @@ path/to/your/MARS dataset/
 |-- bbox_test/
 |-- MARS-evaluation/
 |   |-- info/
+```
+**For DukeV dataset:**
+- Download and unzip the dataset from the official github page. ([data link](http://vision.cs.duke.edu/DukeMTMC/data/misc/DukeMTMC-VideoReID.zip))
+<br/>You will have the structure as follows:
+```
+path/to/your/DukeV dataset/
+|-- gallery/
+|-- query/
+|-- train/
 ```
