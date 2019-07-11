@@ -31,6 +31,13 @@ path/to/your/MARS dataset/
 |-- MARS-evaluation/
 |   |-- info/
 ```
+- run `create_MARS_database.py` to create the database files (.txt and .npy files) into "MARS_database" directory.
+```
+python3 create_MARS_database.py --data_dir /path/to/MARS dataset/ \
+                                --info_dir /path/to/MARS dataset/MARS-evaluation/info/ \
+                                --output_dir ./MARS_database/
+```
+
 **For DukeV dataset:**
 - Download and unzip the dataset from the official github page. ([data link](http://vision.cs.duke.edu/DukeMTMC/data/misc/DukeMTMC-VideoReID.zip))
 <br/>You will have the structure as follows:
@@ -39,4 +46,9 @@ path/to/your/DukeV dataset/
 |-- gallery/
 |-- query/
 |-- train/
+```
+- run `create_DukeV_database.py` to create the database files (.txt and .npy files) into "DukeV_database" directory.
+```
+python3 create_DukeV_database.py --data_dir /path/to/DukeV dataset/ \
+                                 --output_dir ./DukeV_database/
 ```
