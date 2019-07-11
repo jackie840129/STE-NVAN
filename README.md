@@ -17,12 +17,12 @@ We conduct experiments on [MARS](http://www.liangzheng.com.cn/Project/project_ma
 
 For MARS dataset:
 - Download and unzip the dataset from the official website. ([Google Drive](https://drive.google.com/drive/u/1/folders/0B6tjyrV1YrHeMVV2UFFXQld6X1E))
-- Clone the repo of [MARS-evaluation](https://github.com/liangzheng06/MARS-evaluation). We will need the files under *info/* dir.
+- Clone the repo of [MARS-evaluation](https://github.com/liangzheng06/MARS-evaluation). We will need the files under **info/** directory.
 <br/>You will have the structure as follows:
 ```
 path/to/your/MARS dataset/
 |-- bbox_train/
-|-- bb0x_test/
-|-- MARS-evaliation/
+|-- bbox_test/
+|-- MARS-evaluation/
 |   |-- info/
 ```
