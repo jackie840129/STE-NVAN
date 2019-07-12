@@ -14,29 +14,18 @@ def parse_args():
     parser.add_argument('--batch_size',type=int,default=32)
     parser.add_argument('--n_epochs',type=int,default=500)
     parser.add_argument('--num_workers',type=int,default=16)
-    parser.add_argument('--clip',type=bool,default=False)
-    parser.add_argument('--LD',type=tuple,default=(10,5))
-    parser.add_argument('--sample',type=bool,default=True)
     parser.add_argument('--S',type=int,default=6)
     parser.add_argument('--latent_dim',type=int,default=2048,help='resnet50:2048,densenet121:1024,densenet169:1664')
-    parser.add_argument('--preload_path',type=str,default=None)
     parser.add_argument('--load_ckpt',type=str,default=None)
-    parser.add_argument('--load_B',type=str,default=None)
-    parser.add_argument('--log_path',type=str,default=None)
+    parser.add_argument('--log_path',type=str,default='loss.txt')
     parser.add_argument('--ckpt',type=str,default=None)
     parser.add_argument('--optimizer',type=str,default='adam')
-    parser.add_argument('--adapt_id_loss',type=bool,default=False)
     parser.add_argument('--resume_validation',type=bool,default=False)
     parser.add_argument('--model_type',type=str,default='resnet50')
-    parser.add_argument('--seg_model_path',type=str,default='./segmentation/LIP.pth')
-    parser.add_argument('--seg_train_path',type=str,default='.')
-    parser.add_argument('--seg_test_path',type=str,default='.')
-    parser.add_argument('--number',type=int,default=0)
     parser.add_argument('--stride',type=int,default=1)
     parser.add_argument('--temporal',default='mean')
     parser.add_argument('--frame_id_loss',action='store_true',default=False)
     parser.add_argument('--track_id_loss',action='store_true',default=False)
-    parser.add_argument('--cluster_loss',action='store_true',default=False)
     parser.add_argument('--non_layers',type=int, nargs='+')
     parser.add_argument('--stripes',type=int, nargs='+')
 
@@ -44,7 +33,4 @@ def parse_args():
     # parser.add_argument(
     args = parser.parse_args()
 
-    if args.sample == args.clip:
-        print('sample == clip')
-        exit(-1)
     return args

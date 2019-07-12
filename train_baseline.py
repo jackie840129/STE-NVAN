@@ -6,8 +6,8 @@ import random
 from tqdm import tqdm
 import numpy as np
 import math
-from loss import ClusterLoss,TripletLoss,Bloss
-from cmc import MARS_Cmc
+from loss import TripletLoss
+from cmc import Video_Cmc
 
 import torch
 import torch.nn as nn
@@ -16,11 +16,11 @@ from torchvision.transforms import Compose,ToTensor,Normalize,Resize
 import torch.backends.cudnn as cudnn
 cudnn.benchmark=True
 import os
-os.environ['CUDA_VISIBLE_DEVICES']='1,2'
+os.environ['CUDA_VISIBLE_DEVICES']='0'
 torch.multiprocessing.set_sharing_strategy('file_system')
 
 
-def validation(network,dataloader,args,M=None):
+def validation(network,dataloader,args):
     network.eval()
     pbar = tqdm(total=len(dataloader),ncols=100,leave=True)
     pbar.set_description('Inference')
@@ -51,14 +51,7 @@ def validation(network,dataloader,args,M=None):
     gallery_labels = torch.cat(gallery_labels,dim=0).numpy()
     gallery_cams = torch.cat(gallery_cams,dim=0).numpy()
 
-    # np.save('gallery_features.npy',gallery_features)
-    # np.save('gallery_labels.npy',gallery_labels)
-    # np.save('gallery_cams.npy',gallery_cams)
-    # gallery_features = np.load('gallery_features.npy')
-    # gallery_labels = np.load('gallery_labels.npy')
-    # gallery_cams = np.load('gallery_cams.npy')
-
-    Cmc,mAP = MARS_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,1000,M)
+    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,1000)
     network.train()
 
     return Cmc[0],mAP
@@ -73,19 +66,19 @@ if __name__ == '__main__':
     train_transform = Compose([Resize((256,128)),ToTensor(),Normalize(mean=[0.485,0.456,0.406],std=[0.229,0.224,0.225])])
     test_transform = Compose([Resize((256,128)),ToTensor(),Normalize(mean=[0.485,0.456,0.406],std=[0.229,0.224,0.225])])
 
-    print('start dataloader')
-    train_dataloader = utils.Get_Video_train_DataLoader(args.train_txt,args.train_info, train_transform, shuffle=True,num_workers=args.num_workers,S=args.S,track_per_class=args.track_per_class,class_per_batch=args.class_per_batch)
+    print('Start dataloader...')
+    train_dataloader = utils.Get_Video_train_DataLoader(args.train_txt,args.train_info, train_transform, shuffle=True,num_workers=args.num_workers,\
+                                                        S=args.S,track_per_class=args.track_per_class,class_per_batch=args.class_per_batch)
     num_class = train_dataloader.dataset.n_id
     test_dataloader = utils.Get_Video_test_DataLoader(args.test_txt,args.test_info,args.query_info,test_transform,batch_size=args.batch_size,\
                                                  shuffle=False,num_workers=args.num_workers,S=args.S,distractor=True)
-    print('end dataloader\n')
+    print('End dataloader...\n')
 
     network = nn.DataParallel(models.CNN(args.latent_dim,model_type=args.model_type,num_class=num_class,stride=args.stride).cuda())
 
     if args.load_ckpt is not None:
         state = torch.load(args.load_ckpt)
         network.load_state_dict(state)
-        
     
     # log 
     os.system('mkdir -p %s'%(args.ckpt))
@@ -94,7 +87,6 @@ if __name__ == '__main__':
     # Train loop
     # 1. Criterion
     criterion_triplet = TripletLoss('soft',True)
-    criterion_cluster = ClusterLoss('soft',True)
 
     criterion_ID = nn.CrossEntropyLoss().cuda()
     # 2. Optimizer
@@ -106,14 +98,14 @@ if __name__ == '__main__':
         scheduler = optim.lr_scheduler.StepLR(optimizer, args.lr_step_size, 0.1)
 
     id_loss_list = []
-    cluster_loss_list = []
     trip_loss_list = []
     track_id_loss_list = []
 
     best_cmc = 0
     for e in range(args.n_epochs):
-        print('epoch',e)
-        if (e+1)%5 == 0:
+        print('Epoch',e)
+        # Validation
+        if (e)%5 == 0:
             cmc,map = validation(network,test_dataloader,args)
             print('CMC: %.4f, mAP : %.4f'%(cmc,map))
             f = open(os.path.join(args.ckpt,args.log_path),'a')
@@ -123,22 +115,17 @@ if __name__ == '__main__':
             if args.track_id_loss:
                 f.write('Track ID loss : %r\n'%(track_id_loss_list))
             f.write('Trip Loss : %r\n'%(trip_loss_list))
-            if args.cluster_loss:
-                f.write('Clus Loss : %r\n'%(cluster_loss_list))
 
             id_loss_list = []
-            cluster_loss_list = []
             trip_loss_list = []
             track_id_loss_list = []
             if cmc >= best_cmc:
                 torch.save(network.state_dict(),os.path.join(args.ckpt,'ckpt_best.pth'))
-                # torch.save(criterion_b.state_dict(),os.path.join(args.ckpt,'B_best.pth'))
                 best_cmc = cmc
                 f.write('best\n')
             f.close()
-
+        # Training
         total_id_loss = 0 
-        total_cluster_loss = 0 
         total_trip_loss = 0 
         total_track_id_loss = 0
         pbar = tqdm(total=len(train_dataloader),ncols=100,leave=True)
@@ -162,11 +149,6 @@ if __name__ == '__main__':
             total_trip_loss += trip_loss.mean().item()
             total_loss = trip_loss.mean()           
             
-            if args.cluster_loss:
-                cluster_loss = criterion_cluster(pool_feat.reshape(args.class_per_batch,args.track_per_class,-1),labels,dis_func='eu')
-                total_cluster_loss += cluster_loss.mean().item()
-                total_loss += cluster_loss.mean().item()
-
             # Frame level ID loss
             if args.frame_id_loss == True:
                 expand_labels = (labels.unsqueeze(1)).repeat(1,args.S).reshape(-1)
@@ -180,7 +162,6 @@ if __name__ == '__main__':
                 coeff = 1
                 total_loss += coeff*track_id_loss
 
-            
             #####################
             optimizer.zero_grad()
             total_loss.backward()
@@ -192,11 +173,9 @@ if __name__ == '__main__':
             scheduler.step()
 
         avg_id_loss = '%.4f'%(total_id_loss/len(train_dataloader))
-        avg_cluster_loss = '%.4f'%(total_cluster_loss/len(train_dataloader))
         avg_trip_loss = '%.4f'%(total_trip_loss/len(train_dataloader))
         avg_track_id_loss = '%.4f'%(total_track_id_loss/len(train_dataloader))
-        print('Trip : %s , ID : %s , Track_ID : %s, ClusLoss : %s'%(avg_trip_loss,avg_id_loss,avg_track_id_loss,avg_cluster_loss))
+        print('Trip : %s , ID : %s , Track_ID : %s'%(avg_trip_loss,avg_id_loss,avg_track_id_loss))
         id_loss_list.append(avg_id_loss)
-        cluster_loss_list.append(avg_cluster_loss)
         trip_loss_list.append(avg_trip_loss)
         track_id_loss_list.append(avg_track_id_loss)

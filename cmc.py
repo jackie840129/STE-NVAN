@@ -7,32 +7,11 @@ from progressbar import ProgressBar, AnimatedMarker, Percentage
 import math
 from tqdm import trange
 
-def Sample_query(ids, cams):
-    unique_ids = np.unique(ids)
-    unique_cams = np.unique(cams)
-    unique_ids = unique_ids[unique_ids>0] # id -1, 0 cannot be query
 
-    query_idx = []
-    for id in unique_ids:
-        for cam in unique_cams:
-            query_candidate = np.where((ids == id) & (cams == cam))[0]
-            gallery_candidate = np.where((ids == id) & (cams != cam))[0]
-            if len(query_candidate) >= 2 and len(gallery_candidate) != 0: 
-                query_idx.append(query_candidate[0])
-    gallery_idx = np.delete(np.arange(len(ids)), query_idx)
-    #print('Query: %d, Gallery: %d' % (len(query_idx), len(gallery_idx)))
-    return query_idx, gallery_idx
-
-def parse_db(db_txt):
-    df = pd.read_csv(db_txt, sep=' ')
-    ids = df.loc[:, 'label'].values.astype(int)
-    cams = df.loc[:, 'cam'].values.astype(int)
-    return ids, cams
-
-def MARS_Cmc(features, ids, cams, query_idx,rank_size,M=None):
+def Video_Cmc(features, ids, cams, query_idx,rank_size):
     """
     features: numpy array of shape (n, d)
-    labels: numpy array of shape (n)
+    label`s: numpy array of shape (n)
     """
     # Sample query
     data = {'feature':features, 'id':ids, 'cam':cams}
@@ -42,42 +21,16 @@ def MARS_Cmc(features, ids, cams, query_idx,rank_size,M=None):
     g_data = {k:v[g_idx] for k, v in data.items()}
     if len(g_idx) < rank_size: rank_size = len(g_idx)
 
-    CMC, mAP = Cmc(q_data, g_data, rank_size,M)
-
-    return CMC, mAP
-
-def Self_Cmc(features, db_txt, rank_size):
-    """
-    features: numpy array of shape (n, d)
-    labels: numpy array of shape (n)
-    """
-    # Sample query
-    ids, cams = parse_db(db_txt)
-    data = {'feature':features, 'id':ids, 'cam':cams}
-    q_idx, g_idx = Sample_query(ids, cams)
-    q_data = {k:v[q_idx] for k, v in data.items()}
-    g_data = {k:v[g_idx] for k, v in data.items()}
-    if len(g_idx) < rank_size: rank_size = len(g_idx)
-
     CMC, mAP = Cmc(q_data, g_data, rank_size)
 
     return CMC, mAP
-def Vanilla_Cmc(q_features, q_db_txt, g_features, g_db_txt, rank_size):
-    q_ids, q_cams = parse_db(q_db_txt)
-    g_ids, g_cams = parse_db(g_db_txt)
-    q_data = {'feature':q_features, 'id':q_ids, 'cam':q_cams}
-    g_data = {'feature':g_features, 'id':g_ids, 'cam':g_cams}
-    CMC, mAP = Cmc(q_data, g_data, rank_size)
-    return CMC, mAP
+
     
-def Cmc(q_data, g_data, rank_size,M=None):
+def Cmc(q_data, g_data, rank_size):
     n_query = q_data['feature'].shape[0]
     n_gallery = g_data['feature'].shape[0]
 
-    if M is not None:
-        dist = sqdist(q_data['feature'],g_data['feature'],M)
-    else:
-        dist = np_cdist(q_data['feature'], g_data['feature']) # Reture a n_query*n_gallery array
+    dist = np_cdist(q_data['feature'], g_data['feature']) # Reture a n_query*n_gallery array
 
     cmc = np.zeros((n_query, rank_size))
     ap = np.zeros(n_query)
@@ -134,19 +87,6 @@ def Compute_AP(good_image, junk_image, index):
             return ap, cmc
     return ap, cmc
 
-def B_dist(feat1,feat2,B):
-    feat1 = torch.tensor(feat1)
-    feat2 = torch.tensor(feat2)
-    diff = (feat1.unsqueeze(1) - feat2.unsqueeze(0))**2
-    h,w,_ = diff.shape
-    diff = diff.reshape(h*w,-1)
-    n_batch = math.ceil(h*w/128)
-    dist = []
-    with torch.no_grad():
-        for i in trange(n_batch):
-            dist.append(torch.sigmoid(B.fc(diff[i*128:(i+1)*128].cuda())).cpu())
-    dist = -1*torch.cat(dist,dim=0).reshape(h,w).numpy()
-    return dist
 
 def cdist(feat1, feat2):
     """Cosine distance"""

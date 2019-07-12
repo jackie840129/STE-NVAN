@@ -3,7 +3,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import models
 import resnet as res
-# import res_nl as nl
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -48,28 +47,17 @@ class Resnet50_NL(nn.Module):
         self.temporal = temporal
         if self.temporal == 'Done':
             self.avgpool = nn.AdaptiveAvgPool3d(1)
-        if self.temporal == 'ST':
-            self.spatial = nl.SpatialGate(kernel_size=5,conv_dim=2) 
-            self.san = SAN()
+
     def forward(self,x):
         if self.temporal == 'Done':
             x = self.backbone(x)
             x = self.avgpool(x)
             x = x.reshape(x.shape[0],-1)
             return x
-        elif self.temporal == 'ST':
-            x = self.backbone(x)
-            b,c,t,h,w = x.shape
-            if self.spatial.conv_dim == 2:
-                x = x.permute(0,2,1,3,4).reshape(b*t,c,h,w)
-                x = F.adaptive_avg_pool2d(x,1)
-                x = x.reshape(b,t,c)
-                x = self.san(x)
-            return x
 
 
 class Resnet50_s1(nn.Module):
-    def __init__(self,pooling=True,stride=1,pool_type='mean',S=8):
+    def __init__(self,pooling=True,stride=1):
         super(Resnet50_s1,self).__init__()
         original = models.resnet50(pretrained=True).state_dict()
         self.backbone = res.ResNet(last_stride=stride)
@@ -84,45 +72,20 @@ class Resnet50_s1(nn.Module):
             self.avgpool = None
 
         self.out_dim = 2048
-        self.S = S
-        self.pool_type = pool_type
+
     def forward(self,x):
         x = self.backbone(x)
         if self.avgpool is not None:
             x = self.avgpool(x)
             x = x.view(x.shape[0],-1)
-        x = x.reshape(x.shape[0]//self.S,self.S,-1)
-        if self.pool_type == 'mean':
-            x = torch.mean(x,dim=1)
-        elif self.pool_type == 'max':
-            x = torch.max(x,dim=1)[0]
         return x
-
-class SAN(nn.Module):
-    def __init__(self):
-        super(SAN,self).__init__()
-    def forward(self,x):
-        summary = torch.mean(x,dim=1,keepdim=True)
-        product = summary * x
-        attention = torch.softmax(product,dim=1)
-        output = torch.sum(x*attention,dim=1)
-        return output
-class Temporal(nn.Module):
-    def __init__(self):
-        super(Temporal,self).__init__()
-        self.temp = nn.Conv3d(2048,512,(3,2,2))
-    def forward(self,x):
-        output = F.leaky_relu(self.temp(x))
-        b,c,d,h,w = output.shape
-        output = F.adaptive_avg_pool2d(output.reshape((b,c*d,h,w)),1).reshape(b,-1)
-        return output
 
 class CNN(nn.Module):
     def __init__(self,out_dim,model_type='resnet50_s1',num_class=710,non_layers=[1,2,2],stripes=[16,16,16,16], temporal = 'Done',stride=1):
         super(CNN,self).__init__()
         self.model_type = model_type
         if model_type == 'resnet50_s1':
-            self.features = Resnet50_s1(stride=stride,pool_type='max')
+            self.features = Resnet50_s1(stride=stride)
         elif model_type == 'resnet50_NL':
             self.features = Resnet50_NL(non_layers=non_layers,temporal=temporal,non_type='normal')
         elif model_type == 'resnet50_NL_stripe':

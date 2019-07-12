@@ -195,46 +195,5 @@ def Get_Video_test_DataLoader(db_txt,info,query,transform,batch_size=10,shuffle=
     dataloader = DataLoader(dataset,batch_size=batch_size,collate_fn=Video_test_collate_fn,shuffle=shuffle,worker_init_fn=lambda _:np.random.seed(),num_workers=num_workers)
     return dataloader
 
-if __name__ == '__main__':
-    trans = T.ToTensor()
-    seg_trans = T.Lambda(seg_transform)
-    # loader = Get_MARS_test_DataLoader(sys.argv[1],sys.argv[2],sys.argv[3],trans,batch_size=10,shuffle=False,num_workers=8,clip=False,L=8,D=4,sample=True,S=6)
-    # loader = Get_MARS_train_DataLoader(sys.argv[1],sys.argv[2],trans,shuffle=True,num_workers=8,clip=False,L=10,D=5,sample=True,S=6,track_per_class=3,class_per_batch=11)
-    # for e in range(5):
-        # for data in enumerate(loader):
-            # continue
-    # exit(-1)
-    # d = Triplet_Dataset(sys.argv[1],trans,10)
-    d = MARS_test_Dataset(sys.argv[1],sys.argv[2],sys.argv[3],trans)
-    print(d[34][0].shape)
-    exit(-1)
-    print(d.info)
-    print(d.info.shape)
-    print(d.query_idx.shape)
-    cam = d.info[d.query_idx[0],2]
-    can = d.info[d.info[:,2] !=cam]
-    print(cam)
-    print(can.shape)
-    exit(-1)
-    # a,b = d[23]
-    # print(a.shape,b.shape)
-    loader = Get_MARS_DataLoader(sys.argv[1],sys.argv[2],trans)
-    for data in loader:
-        print(data[0].shape,data[1].shape)
-        exit(-1)
-    exit(-1)
-
-    # loader = DataLoader(d,batch_size=4,num_workers=4,collate_fn=collate_fn,shuffle=True,worker_init_fn=lambda _:np.random.seed())
-    loader = Get_Triplet_Img_DataLoader(sys.argv[1],trans,img_per_class=4,class_per_batch=8,shuffle=True,num_workers=4)
-
-    for data in loader:
-        img = data['img']
-        label = data['class']
-        print(img.shape)
-        exit(-1)
-    for data in loader:
-        a = data
-        # print(data[0].shape)
-        # print(data[1])
 
 
