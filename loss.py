@@ -4,25 +4,8 @@ import numpy as np
 from torch.autograd import Variable
 
 class TripletLoss(nn.Module):
-    '''
-    Original margin ranking loss:
-        loss(x1, x2, y) = max(0, -y * (x1 - x2) + margin)
-    
-    Let z = -y * (x1 - x2)
 
-    Soft_margin mode:
-        loss(x1, x2, y) = log(1 + exp(z))
-    Batch_hard mode:
-        z = -y * (x1' - x2'),
-        where x1' is the max x1 within a batch,
-        x2' is the min x2 within a batch
-    '''
-    def __init__(self, margin=0, batch_hard=False,dis_func=None,dim=2048):
-        """
-        Args:
-            margin: int or 'soft'
-            batch_hard: whether to use batch_hard loss
-        """
+    def __init__(self, margin=0, batch_hard=False,dim=2048):
         super(TripletLoss, self).__init__()
         self.batch_hard = batch_hard
         if isinstance(margin, float) or margin == 'soft':
@@ -30,23 +13,15 @@ class TripletLoss(nn.Module):
         else:
             raise NotImplementedError(
                 'The margin {} is not recognized in TripletLoss()'.format(margin))
-        if dis_func == 'M':
-            self.M = torch.eye(dim)
-            self.M += torch.zeros(self.M.shape).normal_(0,1e-3)
-            self.M = self.M.cuda()
 
-    def get_M(self):
-        with torch.no_grad():
-            M = self.M.cpu().numpy()
-            return M
     def forward(self, feat, id=None, pos_mask=None, neg_mask=None, mode='id',dis_func='eu',n_dis=0):
+
         if dis_func == 'cdist':
             feat = feat / feat.norm(p=2,dim=1,keepdim=True)
             dist = self.cdist(feat, feat)
         elif dis_func == 'eu':
             dist = self.cdist(feat, feat)
-        elif dis_func == 'M':
-            dist = self.Mdist(feat,feat)
+
         if mode == 'id':
             if id is None:
                  raise RuntimeError('foward is in id mode, please input id!')
@@ -84,6 +59,7 @@ class TripletLoss(nn.Module):
             pos = negative_mask.topk(k=1, dim=1)[1].view(-1,1)
             negative = torch.gather(dist, dim=1, index=pos)
             z = positive - negative
+
         if isinstance(self.margin, float):
             b_loss = torch.clamp(z + self.margin, min=0)
         elif self.margin == 'soft':
@@ -109,11 +85,6 @@ class TripletLoss(nn.Module):
         diff = a.unsqueeze(1) - b.unsqueeze(0)
         return ((diff**2).sum(2)+1e-12).sqrt()
 
-    def Mdist(self, a, b):
-        diff = a.unsqueeze(1) - b.unsqueeze(0)
-        tmp = torch.matmul(diff,self.M)
-        diff = tmp * diff
-        return (diff.sum(2)+1e-12).sqrt()
 
 class ClusterLoss(nn.Module):
     def __init__(self, margin=0, batch_hard=False):
@@ -150,34 +121,6 @@ class ClusterLoss(nn.Module):
         else:
             raise NotImplementedError("How do you even get here!")
         return b_loss
-
-class Bloss(nn.Module):
-    def __init__(self,dim,n_pos):
-        super(Bloss,self).__init__()
-        self.dim = dim
-        self.fc = nn.Linear(dim,1)
-        # self.bn = nn.BatchNorm1d(dim)
-        self.pos_label = torch.ones(n_pos).cuda()
-        self.neg_label = torch.zeros(3*n_pos).cuda()
-        self.loss = nn.BCEWithLogitsLoss()
-        self.n_pos = n_pos
-    def forward(self,x):
-        x = x.reshape(self.n_pos,2,x.shape[-1])
-        probe = x[:,0,:]
-        gall = x[:,1,:]
-        diff = (probe.unsqueeze(1) - gall.unsqueeze(0))**2
-        identity_mask = np.eye(diff.shape[0],diff.shape[0])
-        pos = np.where(identity_mask==1)
-        pos = diff[pos]
-        neg_list = []
-        for i in range(len(identity_mask)):
-            idx = np.random.permutation(np.where(identity_mask[i]==0)[0])[:3]
-            neg_list.append(diff[i,idx])
-        input = torch.cat([pos,torch.cat(neg_list,dim=0)],dim=0)
-        output = self.fc(input).reshape(-1)
-        loss = self.loss(output,torch.cat([self.pos_label,self.neg_label]))
-        return loss
-
 
 if __name__ == '__main__':
     criterion0 = TripletLoss(margin=0.5, batch_hard=False)

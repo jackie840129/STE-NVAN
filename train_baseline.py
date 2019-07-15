@@ -105,7 +105,7 @@ if __name__ == '__main__':
     for e in range(args.n_epochs):
         print('Epoch',e)
         # Validation
-        if (e)%5 == 0:
+        if (e+1)%5 == 0:
             cmc,map = validation(network,test_dataloader,args)
             print('CMC: %.4f, mAP : %.4f'%(cmc,map))
             f = open(os.path.join(args.ckpt,args.log_path),'a')
