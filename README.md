@@ -60,3 +60,13 @@ path/to/your/DukeV dataset/
 python3 create_DukeV_database.py --data_dir /path/to/DukeV dataset/ \
                                  --output_dir ./DukeV_database/
 ```
+## Usage
+As mentioned in our paper, we have three kinds of models. (Baseline, NVAN, STE-NVAN)
+
+### Baseine model : Resnet50 + FPL
+### NVAN : 5 Non-local layers + Resnet50 + FPL
+### STE-NVAN : Spatial Reduction + Temporal Reduction + NVAN
+
+## Citation
+
+## Reference
