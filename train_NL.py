@@ -1,13 +1,13 @@
-import utils
+from  util import utils
 import parser
-import models
+from net import models
 import sys
 import random
 from tqdm import tqdm
 import numpy as np
 import math
-from loss import TripletLoss
-from cmc import Video_Cmc
+from util.loss import TripletLoss
+from util.cmc import Video_Cmc
 
 import torch
 import torch.nn as nn
