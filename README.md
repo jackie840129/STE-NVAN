@@ -12,10 +12,18 @@ Chih-Ting Liu, Chih-Wei Wu, [Yu-Chiang Frank Wang](http://vllab.ee.ntu.edu.tw/me
 This is the pytorch implementatin of Spatially and Temporally Efficient Non-local Video Attention Network **(STE-NVAN)** for video-based person Re-ID. 
 <br/>It achieves **90.0%** for the baseline version and **88.9%** for the ST-efficient model in rank-1 accuracy on MARS dataset.
 
+## Prerequisites
+- Python3.5+
+- [Pytorch](https://pytorch.org/) (We run the code under version 1.0.)
+- torchvisoin (We run the code under version 0.2.2)
+
 ## Getting Started
 
 ### Installation
-- Install dependancy
+- Install dependancy. You can install all the dependancies by:
+```
+pip3 install numpy, Pillow, progressbar2, tqdm, pandas 
+```
 
 ### Datasets
 We conduct experiments on [MARS](http://www.liangzheng.com.cn/Project/project_mars.html) and [DukeMTMC-VideoReID](https://github.com/Yu-Wu/DukeMTMC-VideoReID) (DukeV) datasets.
