@@ -5,7 +5,7 @@
 - **STE-NVAN**
 <p align="center"><img src='fig/STE-NVAN.jpg' width="800pix"></p>
 
-[[Paper]](http://media.ee.ntu.edu.tw/research/STE_NVAN/BMVC19_STE_NVAN_cam.pdf)
+[[Paper]](http://media.ee.ntu.edu.tw/research/STE_NVAN/BMVC19_STE_NVAN_cam.pdf) [[arXiv]](https://arxiv.org/abs/1908.01683)
 
 Chih-Ting Liu, Chih-Wei Wu, [Yu-Chiang Frank Wang](http://vllab.ee.ntu.edu.tw/members.html) and [Shao-Yi Chien](http://www.ee.ntu.edu.tw/profile?id=101),<br/>British Machine Vision Conference (**BMVC**), 2019
 
