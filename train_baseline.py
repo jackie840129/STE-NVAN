@@ -51,7 +51,7 @@ def validation(network,dataloader,args):
     gallery_labels = torch.cat(gallery_labels,dim=0).numpy()
     gallery_cams = torch.cat(gallery_cams,dim=0).numpy()
 
-    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,1000)
+    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,10000)
     network.train()
 
     return Cmc[0],mAP
@@ -105,7 +105,7 @@ if __name__ == '__main__':
     for e in range(args.n_epochs):
         print('Epoch',e)
         # Validation
-        if (e+1)%5 == 0:
+        if (e+1)%10 == 0:
             cmc,map = validation(network,test_dataloader,args)
             print('CMC: %.4f, mAP : %.4f'%(cmc,map))
             f = open(os.path.join(args.ckpt,args.log_path),'a')
