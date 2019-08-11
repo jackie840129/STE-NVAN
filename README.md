@@ -61,11 +61,28 @@ python3 create_DukeV_database.py --data_dir /path/to/DukeV dataset/ \
                                  --output_dir ./DukeV_database/
 ```
 ## Usage-Testing
-For testing, we provide three trained model in this link.
+For testing, we provide three trained models in this [link](https://drive.google.com/drive/folders/1yi4RJHhu8iMtewdnWYpLCLkIi0okjl35?usp=sharing).
 
 You should first create a directory with this command: `mkdir ckpt`, to put these three models under the directory.
 
-- Testing Resnet50 + FPL(mean)
+All three execution commands are in the script `run_evaluate.sh`. 
+You can check and alter the arguments inside and run 
+```
+sh run_evaluate.sh
+``` 
+to obtain the rank-1 accuracy and the mAP score.
+
+The evaluation commands of three models are as follows.
+
+### Baseine model : Resnet50 + FPL (mean)
+Uncomment this part.
+```
+# Evaluate ResNet50 + FPL (mean or max)
+LOAD_CKPT=./ckpt/R50_baseline_mean.pth
+python3 evaluate.py --test_txt $TEST_TXT --test_info $TEST_INFO --query_info $QUERY_INFO \
+                    --batch_size 64 --model_type 'resnet50_s1' --num_workers 8  --S 8 \
+                    --latent_dim 2048 --temporal mean --stride 1 --load_ckpt $LOAD_CKPT 
+```
 
 ## Usage-Training
 As mentioned in our paper, we have three kinds of models. (Baseline, NVAN, STE-NVAN)
