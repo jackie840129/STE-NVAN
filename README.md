@@ -87,7 +87,11 @@ python3 evaluate.py --test_txt $TEST_TXT --test_info $TEST_INFO --query_info $QU
 ## Usage-Training
 As mentioned in our paper, we have three kinds of models. (Baseline, NVAN, STE-NVAN)
 
-### Baseine model : Resnet50 + FPL
+### Baseine model : Resnet50 + FPL (mean)
+You can alter the arguments in `run_baseline.sh` or just use this command:
+```
+sh run_baseline.sh
+```
 ### NVAN : 5 Non-local layers + Resnet50 + FPL
 ### STE-NVAN : Spatial Reduction + Temporal Reduction + NVAN
 
