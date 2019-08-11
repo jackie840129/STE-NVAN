@@ -70,12 +70,12 @@ You can check and alter the arguments inside and run
 ```
 sh run_evaluate.sh
 ``` 
-to obtain the rank-1 accuracy and the mAP score.
+to obtain the rank-1 accuracy and the mAP score. (Some scores are higher than those in my paper because I've retrained some models) 
 
 The evaluation commands of three models are as follows.
 
 ### Baseine model : Resnet50 + FPL (mean)
-Uncomment this part.
+Uncomment this part. You will get R1=87.42% and mAP=79.44%.
 ```
 # Evaluate ResNet50 + FPL (mean or max)
 LOAD_CKPT=./ckpt/R50_baseline_mean.pth
