@@ -61,7 +61,7 @@ python3 create_DukeV_database.py --data_dir /path/to/DukeV dataset/ \
                                  --output_dir ./DukeV_database/
 ```
 ## Usage-Testing
-For testing, we provide three trained models in this [link](https://drive.google.com/drive/folders/1yi4RJHhu8iMtewdnWYpLCLkIi0okjl35?usp=sharing).
+For testing, we provide three trained models in this [**link**](https://drive.google.com/drive/folders/1yi4RJHhu8iMtewdnWYpLCLkIi0okjl35?usp=sharing).
 
 You should first create a directory with this command: `mkdir ckpt`, to put these three models under the directory.
 
