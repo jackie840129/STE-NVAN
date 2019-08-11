@@ -60,7 +60,14 @@ path/to/your/DukeV dataset/
 python3 create_DukeV_database.py --data_dir /path/to/DukeV dataset/ \
                                  --output_dir ./DukeV_database/
 ```
-## Usage
+## Usage-Testing
+For testing, we provide three trained model in this link.
+
+You should first create a directory with this command: `mkdir ckpt`, to put these three models under the directory.
+
+- Testing Resnet50 + FPL(mean)
+
+## Usage-Training
 As mentioned in our paper, we have three kinds of models. (Baseline, NVAN, STE-NVAN)
 
 ### Baseine model : Resnet50 + FPL
