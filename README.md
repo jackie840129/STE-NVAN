@@ -68,7 +68,7 @@ Furthermore, we follow the video-based evaluation metric in this [paper](https:/
 In detail, we will sample the first frame in each chunk of a tracklet.
 
 ### Prerequisite
-For testing, we provide three trained models in this [**link**](https://drive.google.com/drive/folders/1yi4RJHhu8iMtewdnWYpLCLkIi0okjl35?usp=sharing).
+For testing, we provide three trained models on **MARS** dataset in this [**link**](https://drive.google.com/drive/folders/1yi4RJHhu8iMtewdnWYpLCLkIi0okjl35?usp=sharing).
 
 You should first create a directory with this command: `$ mkdir ckpt`, to put these three models under the directory.
 
