@@ -12,7 +12,7 @@ python3 train_NL.py --train_txt $TRAIN_TXT --train_info $TRAIN_INFO  --batch_siz
                      --model_type 'resnet50_NL' --num_workers 8 --track_per_class 4 --S 8 --latent_dim 2048 --temporal Done  --track_id_loss \
                      --non_layers  0 2 3 0  
 
-# For NVAN
+# For STE-NVAN
 #CKPT=ckpt_NL_stripe16_hr_0230
 #python3 train_NL.py --train_txt $TRAIN_TXT --train_info $TRAIN_INFO  --batch_size 64 \
                      #--test_txt $TEST_TXT  --test_info  $TEST_INFO   --query_info $QUERY_INFO \
