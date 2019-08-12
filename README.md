@@ -92,7 +92,7 @@ python3 evaluate.py --test_txt $TEST_TXT --test_info $TEST_INFO --query_info $QU
                     --batch_size 64 --model_type 'resnet50_s1' --num_workers 8  --S 8 \
                     --latent_dim 2048 --temporal mean --stride 1 --load_ckpt $LOAD_CKPT 
 ```
-### NVAN : R50+ 5 NL + FPL
+### NVAN : R50 + 5 Non-local layers + FPL
 Uncomment this part. You will get R1=90.00% and mAP=82.79%.
 ```
 #Evaluate NVAN (R50 + 5 NL + FPL)
@@ -119,7 +119,7 @@ You can alter the arguments in `run_baseline.sh` or just use this command:
 ```
 $ sh run_baseline.sh
 ```
-### NVAN : 5 Non-local layers + Resnet50 + FPL
+### NVAN : R50 + 5 Non-local layers + FPL
 You can alter the arguments or uncomment this part in `run_NL.sh`:
 ```
 # For NVAN
@@ -134,7 +134,7 @@ Then run this script.
 ```
 $ sh run_NL.sh
 ```
-### STE-NVAN : Spatial Reduction + Temporal Reduction + NVAN
+### STE-NVAN : NVAN + Spatial Reduction + Temporal Reduction
 You can alter the arguments or uncomment this part in `run_NL.sh`:
 ```
 # For STE-NVAN
