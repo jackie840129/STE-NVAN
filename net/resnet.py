@@ -619,13 +619,8 @@ class ResNet_Video_nonlocal_stripe_hr(nn.Module):
                 NL3_counter+=1
         # Max pool
         _,C,H,W = x.shape
-        x = x.reshape(-1,T,C,H,W)
-        x1 = torch.max(x[:,0:2,:,:,:],dim=1,keepdim=True)[0]
-        x2 = x[:,2,:,:,:].reshape(-1,1,C,H,W)
-        # x2 = torch.max(x[:,1:,:,:,:],dim=1,keepdim=True)[0]
-        x = torch.cat([x1,x2],dim=1).reshape(-1,C,H,W)
-        # x = torch.max(x.reshape(-1,2,C,H,W),dim=1)[0]
-        T  = T//2 + 1
+        x = torch.max(x.reshape(-1,2,C,H,W),dim=1)[0]
+        T  = T//2
         # Layer 4
         NL4_counter = 0
         if len(self.NL_4_idx)==0: self.NL_4_idx=[-1]

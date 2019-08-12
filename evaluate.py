@@ -51,7 +51,7 @@ def validation(network,dataloader,args):
     gallery_labels = torch.cat(gallery_labels,dim=0).numpy()
     gallery_cams = torch.cat(gallery_cams,dim=0).numpy()
 
-    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,1000)
+    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,10000)
     network.train()
 
     return Cmc[0],mAP
@@ -74,7 +74,7 @@ if __name__ == '__main__':
         exit()
     else:
         state = torch.load(args.load_ckpt)
-        network.load_state_dict(new,strict=True)
+        network.load_state_dict(state,strict=True)
 
 
     cmc,map = validation(network,test_dataloader,args)

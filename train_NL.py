@@ -53,7 +53,7 @@ def validation(network,dataloader,args):
     gallery_labels = torch.cat(gallery_labels,dim=0).numpy()
     gallery_cams = torch.cat(gallery_cams,dim=0).numpy()
 
-    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,1000)
+    Cmc,mAP = Video_Cmc(gallery_features,gallery_labels,gallery_cams,dataloader.dataset.query_idx,10000)
     network.train()
 
     return Cmc[0],mAP
@@ -66,13 +66,13 @@ if __name__ == '__main__':
     # set transformation (H flip is inside dataset)
     train_transform = Compose([Resize((256,128)),ToTensor(),Normalize(mean=[0.485,0.456,0.406],std=[0.229,0.224,0.225])])
     test_transform = Compose([Resize((256,128)),ToTensor(),Normalize(mean=[0.485,0.456,0.406],std=[0.229,0.224,0.225])])
-    print('start dataloader...')
+    print('Start dataloader...')
     train_dataloader = utils.Get_Video_train_DataLoader(args.train_txt,args.train_info, train_transform, shuffle=True,num_workers=args.num_workers,\
                                                         S=args.S,track_per_class=args.track_per_class,class_per_batch=args.class_per_batch)
     num_class = train_dataloader.dataset.n_id
     test_dataloader = utils.Get_Video_test_DataLoader(args.test_txt,args.test_info,args.query_info,test_transform,batch_size=args.batch_size,\
                                                  shuffle=False,num_workers=args.num_workers,S=args.S,distractor=True)
-    print('end dataloader...')
+    print('End dataloader...')
     
     network = nn.DataParallel(models.CNN(args.latent_dim,model_type=args.model_type,num_class=num_class,non_layers=args.non_layers,stripes=args.stripes,temporal=args.temporal).cuda())
     if args.load_ckpt is not None:
@@ -102,9 +102,10 @@ if __name__ == '__main__':
     best_cmc = 0
     for e in range(args.n_epochs):
         print('epoch',e)
-        if (e)%10 == 0:
+        if (e+1)%10 == 0:
             cmc,map = validation(network,test_dataloader,args)
             print('CMC: %.4f, mAP : %.4f'%(cmc,map))
+            exit(-1)
             f = open(os.path.join(args.ckpt,args.log_path),'a')
             f.write('epoch %d, rank-1 %f , mAP %f\n'%(e,cmc,map))
             if args.frame_id_loss:
