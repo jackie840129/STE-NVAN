@@ -151,7 +151,14 @@ $ sh run_NL.sh
 ```
 
 ## Citation
-
+```
+@inproceedings{liu2019spatially,
+  title={Spatially and Temporally Efficient Non-local Attention Network for Video-based Person Re-Identification},
+  author={Liu, Chih-Ting and Wu, Chih-Wei and Wang, Yu-Chiang Frank and Chien, Shao-Yi},
+  booktitle={British Machine Vision Conference},
+  year={2019}
+}
+```
 ## Reference
 
 Chih-Ting Liu, [Media IC & System Lab](https://github.com/mediaic), National Taiwan University
