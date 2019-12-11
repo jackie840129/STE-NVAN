@@ -105,7 +105,6 @@ if __name__ == '__main__':
         if (e+1)%10 == 0:
             cmc,map = validation(network,test_dataloader,args)
             print('CMC: %.4f, mAP : %.4f'%(cmc,map))
-            exit(-1)
             f = open(os.path.join(args.ckpt,args.log_path),'a')
             f.write('epoch %d, rank-1 %f , mAP %f\n'%(e,cmc,map))
             if args.frame_id_loss:
