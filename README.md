@@ -7,7 +7,7 @@
 
 [[Paper]](http://media.ee.ntu.edu.tw/research/STE_NVAN/BMVC19_STE_NVAN_cam.pdf) [[arXiv]](https://arxiv.org/abs/1908.01683)
 
-Chih-Ting Liu, Chih-Wei Wu, [Yu-Chiang Frank Wang](http://vllab.ee.ntu.edu.tw/members.html) and [Shao-Yi Chien](http://www.ee.ntu.edu.tw/profile?id=101),<br/>British Machine Vision Conference (**BMVC**), 2019
+[Chih-Ting Liu](https://jackie840129.github.io/), Chih-Wei Wu, [Yu-Chiang Frank Wang](http://vllab.ee.ntu.edu.tw/members.html) and [Shao-Yi Chien](http://www.ee.ntu.edu.tw/profile?id=101),<br/>British Machine Vision Conference (**BMVC**), 2019
 
 This is the pytorch implementatin of Spatially and Temporally Efficient Non-local Video Attention Network **(STE-NVAN)** for video-based person Re-ID. 
 <br/>It achieves **90.0%** for the baseline version and **88.9%** for the ST-efficient model in rank-1 accuracy on MARS dataset.
