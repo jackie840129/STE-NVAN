@@ -12,6 +12,10 @@ Chih-Ting Liu, Chih-Wei Wu, [Yu-Chiang Frank Wang](http://vllab.ee.ntu.edu.tw/me
 This is the pytorch implementatin of Spatially and Temporally Efficient Non-local Video Attention Network **(STE-NVAN)** for video-based person Re-ID. 
 <br/>It achieves **90.0%** for the baseline version and **88.9%** for the ST-efficient model in rank-1 accuracy on MARS dataset.
 
+## News ##
+
+**`2021-06-13`**: We will update this repro to a new version, which is similar to our new work [CF-AAN](https://github.com/jackie840129/CF-AAN) !
+
 ## Prerequisites
 - Python3.5+
 - [Pytorch](https://pytorch.org/) (We run the code under version 1.0.)
